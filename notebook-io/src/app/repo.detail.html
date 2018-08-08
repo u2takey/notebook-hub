@@ -1,0 +1,21 @@
+<div class="row">
+    <div class="col-mat-12">
+        <mat-toolbar>
+            <a href="{{repo.get('repo')['html_url']}}" target="_blank" rel="noopener noreferrer">{{ repo.get('repo')['full_name'] }} </a>
+        </mat-toolbar>
+        <mat-card>{{ repo.get('repo')['description'] }}</mat-card>
+        <ngx-datatable [rows]='notebooks' [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" class="material striped ngx-datatable" [externalPaging]="true" [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size"
+            (page)='setPage($event)' [columns]="[{name:'Name'},{name:'Description'},{name:'Stars'}]">
+            <ngx-datatable-column name="Path">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <a href="{{repo.get('repo')['html_url']}}/blob/{{repo.get('repo')['default_branch']}}/{{ row.get('path') }}" target="_blank" rel="noopener noreferrer">{{row.get('path')}}</a>
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Size">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{row.get('size')}}
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>
+    </div>
+</div>
