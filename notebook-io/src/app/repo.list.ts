@@ -52,12 +52,11 @@ export class RepoListComponent implements OnInit {
     const offset = this.page.pageNumber * this.page.size;
     this.service.getRepos(offset, this.page.size, query).then(
       repos => {
-        this.repos = repos.map(r => {
-          const r1 = r;
-          r1['encode_full_name'] = encodeURIComponent(r.get('repo')['full_name']);
-          console.log(r1['encode_full_name']);
-          return r1;
+        repos.forEach((r, index) => {
+          repos[index]['encode_full_name'] = encodeURIComponent(r.get('repo')['full_name']);
+          // console.log(repos[index]["encode_full_name"]);
         });
+        this.repos = repos;
 
         this.ref.detectChanges();
       },

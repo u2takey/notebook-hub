@@ -26,6 +26,7 @@ export class Service {
 
   getRepo(q: string): Promise<any> {
     const query = new AV.Query('repos');
+    query.equalTo("repo.full_name", q);
     return query.first();
   }
 

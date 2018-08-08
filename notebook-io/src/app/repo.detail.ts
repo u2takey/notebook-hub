@@ -2,9 +2,7 @@ import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import {Repo, Page, Notebook} from './model/model';
 import {Service} from './service/service';
 import {ActivatedRoute} from '@angular/router';
-import {Observable} from 'rxjs';
 import {Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 
 @Component({
   selector: 'app-repo-detail',
@@ -29,15 +27,19 @@ export class RepoDetailComponent implements OnInit {
     this.page.pageNumber = 0;
   }
   ngOnInit(): void {
-    this.repoName = this.route.snapshot.paramMap.get('repo');
+    this.route.params.subscribe(params => {
+      this.repoName = params['repo'];
+      console.log(this.repoName);
 
-    this.service.getNotebooksCount(this.repoName).then(count => {
-      this.page.totalElements = count;
-      this.page.totalPages = count / this.page.size;
-      this.setPage({ offset: 0 });
-    });
-    this.service.getRepo(this.repoName).then(repo => {
-      this.repo = repo;
+      this.service.getNotebooksCount(this.repoName).then(count => {
+        this.page.totalElements = count;
+        this.page.totalPages = count / this.page.size;
+        this.setPage({ offset: 0 });
+      });
+
+      this.service.getRepo(this.repoName).then(repo => {
+        this.repo = repo;
+      });
     });
   }
 
