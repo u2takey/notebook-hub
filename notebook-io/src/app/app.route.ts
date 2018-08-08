@@ -5,7 +5,7 @@ import { RepoDetailComponent } from './repo.detail';
 
 
 const routes: Routes = [
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: '', component: RepoListComponent },
   { path: 'dashboard', component: RepoListComponent },
   { path: 'repo/:repo', component: RepoDetailComponent }
 ];

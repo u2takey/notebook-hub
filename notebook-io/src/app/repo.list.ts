@@ -59,7 +59,6 @@ export class RepoListComponent implements OnInit {
           return r1;
         });
 
-        // console.log(repos);
         this.ref.detectChanges();
       },
       err => {
