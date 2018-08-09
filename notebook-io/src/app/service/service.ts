@@ -11,39 +11,41 @@ export class Service {
     });
   }
 
-  getRepos(offset, limit: number, q: string): Promise<any[]> {
+  buildRepoQuery(q: string): any {
     const q1 = new AV.Query('repos');
     const q2 = new AV.Query('repos');
+    const q3 = new AV.Query('repos');
     if (q !== '') {
       q1.contains('repo.description', q);
       q2.containsAll('tags', [q]);
+      q3.contains('name', q);
     }
-    const query = AV.Query.or(q1, q2);
+    return AV.Query.or(q1, q2, q3);
+  }
+
+  getRepos(offset, limit: number, q: string): Promise<any[]> {
+    const query = this.buildRepoQuery(q);
     query.limit(limit);
     query.skip(offset);
+    query.descending('repo.stargazers_count');
     return query.find();
   }
 
   getRepo(q: string): Promise<any> {
     const query = new AV.Query('repos');
-    query.equalTo("repo.full_name", q);
+    query.equalTo('repo.full_name', q);
     return query.first();
   }
 
   getReposCount(q: string): Promise<number> {
-    const q1 = new AV.Query('repos');
-    const q2 = new AV.Query('repos');
-    if (q !== '') {
-      q1.contains('repo.description', q);
-      q2.containsAll('tags', [q]);
-    }
-    const query = AV.Query.or(q1, q2);
-    return query.count();
+    return this.buildRepoQuery(q).count();
   }
 
   getNotebooksCount(q: string): Promise<number> {
     const query = new AV.Query('notebooks');
-    query.equalTo('repo', q);
+    if (q !== '' ) {
+      query.equalTo('repo', q);
+    }
     return query.count();
   }
 

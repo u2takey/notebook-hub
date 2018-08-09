@@ -14,20 +14,26 @@ import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 export class RepoListComponent implements OnInit {
   repos: Repo[];
   page: Page = new Page();
+  totalBooks: number;
   lastKeypress: number;
+  query: string;
   searchTerm$ = new Subject<string>();
   constructor(
     private ref: ChangeDetectorRef,
     private service: Service,
-    private router: Router,
+    private router: Router
   ) {
     this.page.size = 20;
     this.page.totalElements = 0;
     this.page.totalPages = 0;
     this.page.pageNumber = 0;
-    this.search(this.searchTerm$);
+    (this.query = ''), this.search(this.searchTerm$);
   }
   ngOnInit(): void {
+    this.service.getNotebooksCount('').then(count => {
+      this.totalBooks = count;
+      this.ref.detectChanges();
+    });
     this.service.getReposCount('').then(count => {
       this.page.totalElements = count;
       this.page.totalPages = count / this.page.size;
@@ -37,24 +43,30 @@ export class RepoListComponent implements OnInit {
 
   search(terms: Observable<string>) {
     return terms
-      .pipe(distinctUntilChanged(), debounceTime(300))
+      .pipe(
+        distinctUntilChanged(),
+        debounceTime(300)
+      )
       .subscribe(q => {
         this.service.getReposCount(q).then(count => {
           this.page.totalElements = count;
           this.page.totalPages = count / this.page.size;
-          this.setPage({ offset: 0 }, q);
+          this.setPage({ offset: 0 });
+          this.query = q;
         });
       });
   }
 
-  setPage(pageInfo, query: string = '') {
+  setPage(pageInfo) {
     this.page.pageNumber = pageInfo.offset;
     const offset = this.page.pageNumber * this.page.size;
-    this.service.getRepos(offset, this.page.size, query).then(
+    this.service.getRepos(offset, this.page.size, this.query).then(
       repos => {
         repos.forEach((r, index) => {
-          repos[index]['encode_full_name'] = encodeURIComponent(r.get('repo')['full_name']);
-          // console.log(repos[index]["encode_full_name"]);
+          repos[index]['encode_full_name'] = encodeURIComponent(
+            r.get('repo')['full_name']
+          );
+          // console.log(repos[index]['encode_full_name']);
         });
         this.repos = repos;
 
