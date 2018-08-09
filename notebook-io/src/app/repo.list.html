@@ -24,6 +24,11 @@
                     {{row.get('repo')['description']}}
                 </ng-template>
             </ngx-datatable-column>
+            <ngx-datatable-column name="Notebooks">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    {{row.get('nbcount')}}
+                </ng-template>
+            </ngx-datatable-column>
             <ngx-datatable-column name="Stars">
                 <ng-template let-row="row" ngx-datatable-cell-template>
                     {{row.get('repo')['stargazers_count']}}

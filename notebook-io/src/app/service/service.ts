@@ -17,7 +17,7 @@ export class Service {
     const q3 = new AV.Query('repos');
     if (q !== '') {
       q1.contains('repo.description', q);
-      q2.containsAll('tags', [q]);
+      q2.containsAll('tag50', [q]);
       q3.contains('name', q);
     }
     return AV.Query.or(q1, q2, q3);
